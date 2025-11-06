@@ -2,16 +2,44 @@ import streamlit as st
 import instaloader
 import os
 import re
+import shutil
 
+# --- CONFIGURACIÓN DE LA APP ---
 st.set_page_config(page_title="Descargar Video de Instagram", page_icon="📲", layout="centered")
 
 st.title("📲 Descargar Video de Instagram")
 st.write("Pega aquí el enlace de un video **público** de Instagram (post o reel) y descárgalo directamente.")
 
-# Input del usuario
-url = st.text_input("🔗 Enlace del video de Instagram:")
+# --- SIDEBAR ---
+st.sidebar.header("💡 Guía rápida")
+st.sidebar.markdown("""
+1. Copia el enlace del **post o reel público** desde Instagram.  
+2. Pégalo en el cuadro principal.  
+3. Presiona **“📥 Descargar Video”**.  
+4. Espera unos segundos y podrás **ver y descargar el video .mp4**.
 
-# Carpeta donde se guardarán los videos
+⚠️ Solo funciona con publicaciones **públicas**.
+""")
+
+st.sidebar.divider()
+
+st.sidebar.subheader("🧹 Limpieza de archivos")
+if st.sidebar.button("Eliminar videos descargados"):
+    if os.path.exists("video_descargado"):
+        shutil.rmtree("video_descargado")
+        st.sidebar.success("✅ Carpeta 'video_descargado' eliminada correctamente.")
+    else:
+        st.sidebar.info("No hay archivos para eliminar.")
+
+st.sidebar.divider()
+st.sidebar.markdown("""
+**📘 Aviso Legal**  
+Esta herramienta es solo para uso personal y educativo.  
+Respeta los derechos de autor del contenido descargado.  
+""")
+
+# --- LÓGICA PRINCIPAL ---
+url = st.text_input("🔗 Enlace del video de Instagram:")
 output_folder = "video_descargado"
 
 if st.button("📥 Descargar Video"):
@@ -19,17 +47,15 @@ if st.button("📥 Descargar Video"):
         st.warning("Por favor ingresa un enlace de Instagram.")
     else:
         try:
-            # Crear instancia de Instaloader
             L = instaloader.Instaloader(dirname_pattern=output_folder, save_metadata=False, download_comments=False)
 
-            # Aceptar tanto /p/ como /reel/ o /tv/
+            # Acepta /p/, /reel/ y /tv/
             match = re.search(r"/(p|reel|tv)/([A-Za-z0-9_-]+)", url)
             if not match:
                 st.error("❌ Enlace no válido. Debe ser un enlace de publicación o reel (ejemplo: https://www.instagram.com/reel/XXXX/)")
             else:
                 shortcode = match.group(2)
 
-                # Descargar el post
                 post = instaloader.Post.from_shortcode(L.context, shortcode)
                 L.download_post(post, target=output_folder)
 
