@@ -14,20 +14,16 @@ st.write("Selecciona la plataforma, pega el enlace y descarga tu video en format
 # --- SIDEBAR ---
 st.sidebar.header("💡 Guía rápida")
 st.sidebar.markdown("""
-1. Selecciona la **plataforma**: Instagram, TikTok o YouTube.  
+1. Selecciona la **plataforma** en la parte principal.  
 2. Copia y pega el **enlace público** del video.  
 3. Presiona **“📥 Descargar Video”**.  
-4. Espera unos segundos y podrás **ver y descargar el video en MP4**.
+4. Espera unos segundos y podrás **ver y descargar el video MP4**.
 
 ⚠️ Solo funciona con contenido **público**.
 """)
 
 st.sidebar.divider()
 
-# Selector de plataforma
-plataforma = st.sidebar.selectbox("🌐 Plataforma:", ["Instagram", "TikTok", "YouTube"])
-
-# Limpieza de archivos
 st.sidebar.subheader("🧹 Limpieza de archivos")
 if st.sidebar.button("Eliminar videos descargados"):
     if os.path.exists("video_descargado"):
@@ -40,13 +36,16 @@ st.sidebar.divider()
 st.sidebar.markdown("""
 **📘 Aviso Legal**  
 Esta herramienta es solo para uso personal y educativo.  
-Respeta los derechos de autor y privacidad de los creadores.
+Respeta los derechos de autor y la privacidad de los creadores.
 """)
 
-# --- LÓGICA PRINCIPAL ---
+# --- INTERFAZ PRINCIPAL ---
+plataforma = st.selectbox("🌐 Selecciona la plataforma:", ["Instagram", "TikTok", "YouTube"])
+
 url = st.text_input("🔗 Pega el enlace del video:")
 output_folder = "video_descargado"
 
+# --- FUNCIÓN PRINCIPAL ---
 if st.button("📥 Descargar Video"):
     if not url:
         st.warning("Por favor ingresa un enlace válido.")
