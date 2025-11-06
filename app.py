@@ -6,7 +6,7 @@ import re
 st.set_page_config(page_title="Descargar Video de Instagram", page_icon="📲", layout="centered")
 
 st.title("📲 Descargar Video de Instagram")
-st.write("Pega aquí el enlace de un video **público** de Instagram y descárgalo directamente.")
+st.write("Pega aquí el enlace de un video **público** de Instagram (post o reel) y descárgalo directamente.")
 
 # Input del usuario
 url = st.text_input("🔗 Enlace del video de Instagram:")
@@ -22,12 +22,12 @@ if st.button("📥 Descargar Video"):
             # Crear instancia de Instaloader
             L = instaloader.Instaloader(dirname_pattern=output_folder, save_metadata=False, download_comments=False)
 
-            # Extraer shortcode del enlace
-            match = re.search(r"/p/([A-Za-z0-9_-]+)/", url)
+            # Aceptar tanto /p/ como /reel/ o /tv/
+            match = re.search(r"/(p|reel|tv)/([A-Za-z0-9_-]+)", url)
             if not match:
-                st.error("❌ Enlace no válido. Debe ser un enlace de publicación (ejemplo: https://www.instagram.com/p/XXXX/)")
+                st.error("❌ Enlace no válido. Debe ser un enlace de publicación o reel (ejemplo: https://www.instagram.com/reel/XXXX/)")
             else:
-                shortcode = match.group(1)
+                shortcode = match.group(2)
 
                 # Descargar el post
                 post = instaloader.Post.from_shortcode(L.context, shortcode)
